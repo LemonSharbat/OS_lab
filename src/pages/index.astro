@@ -7,7 +7,10 @@ const programs = (await getCollection('programs')).sort((a, b) =>
 );
 const partA = programs.filter((program) => program.data.part === 'A');
 const partB = programs.filter((program) => program.data.part === 'B');
-const hrefFor = (id: string) => `${import.meta.env.BASE_URL}programs/${id.replace(/\/info$/, '')}/`;
+const hrefFor = (id: string) => {
+  const slug = id.replace(/\/info$/, '');
+  return `${import.meta.env.BASE_URL}programs/${slug}/`;
+};
 ---
 <BaseLayout>
   <div class="page-heading">
