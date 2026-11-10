@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import { readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+export async function getStaticPaths() {
+  const programs = await getCollection('programs');
+  return programs.map((program) => ({
+    params: { slug: program.id.replace(/\/info$/, '') },
+    props: { program }
+  }));
+}
+
+const { program } = Astro.props;
+const { Content } = await render(program);
+const programDirectory = dirname(program.id);
+const sourcePath = resolve(process.cwd(), 'programs', programDirectory, program.data.source);
+const sourceCode = await readFile(sourcePath, 'utf8');
+const allPrograms = (await getCollection('programs')).sort((a, b) => a.data.part.localeCompare(b.data.part) || a.data.order - b.data.order);
+const currentIndex = allPrograms.findIndex((item) => item.id === program.id);
+const previous = allPrograms[currentIndex - 1];
+const next = allPrograms[currentIndex + 1];
+const hrefFor = (id: string) => `${import.meta.env.BASE_URL}programs/${id.replace(/\/info$/, '')}/`;
+---
+<BaseLayout title={program.data.title}>
+  <nav class="breadcrumbs"><a href={import.meta.env.BASE_URL}>Programs</a><span>/</span><span>{program.data.subject}</span><span>/</span><span>Part {program.data.part}</span></nav>
+  <header class="program-heading">
+    <p class="eyebrow">{program.data.subject.toUpperCase()} · PART {program.data.part}</p>
+    <h1>{program.data.title}</h1>
+    {program.data.category && <p class="intro">{program.data.category}</p>}
+    <div class="tag-row"><span class="language-tag">{program.data.language.toUpperCase()}</span>{program.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+  </header>
+  <article class="markdown-content"><Content /></article>
+  <section class="source-section">
+    <div class="section-title-row"><h2>Source code</h2><span>{program.data.source}</span></div>
+    <CodeBlock code={sourceCode} language={program.data.language} filename={program.data.source} />
+  </section>
+  <nav class="program-pagination" aria-label="Program navigation">
+    {previous ? <a href={hrefFor(previous.id)}><span>← Previous</span><strong>{previous.data.title}</strong></a> : <span></span>}
+    {next ? <a class="next-program" href={hrefFor(next.id)}><span>Next →</span><strong>{next.data.title}</strong></a> : <span></span>}
+  </nav>
+</BaseLayout>

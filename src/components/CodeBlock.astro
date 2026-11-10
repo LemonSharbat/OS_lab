@@ -1,0 +1,51 @@
+---
+import { codeToHtml } from 'shiki';
+
+interface Props {
+  code: string;
+  language: 'c' | 'cpp' | 'bash' | 'text';
+  filename: string;
+}
+
+const { code, language, filename } = Astro.props;
+const html = await codeToHtml(code.trimEnd(), {
+  lang: language === 'text' ? 'text' : language,
+  theme: 'github-dark'
+});
+---
+
+<section class="code-panel" aria-label={`Source code: ${filename}`}>
+  <header class="code-header">
+    <span class="code-filename">{filename}</span>
+    <div class="code-actions">
+      <span class="code-language">{language.toUpperCase()}</span>
+      <button class="copy-button" type="button" data-copy-code>
+        <span aria-hidden="true">⧉</span> Copy
+      </button>
+    </div>
+  </header>
+  <div class="code-scroll" set:html={html} />
+  <textarea class="code-source" aria-hidden="true" tabindex="-1" readonly>{code}</textarea>
+</section>
+
+<script>
+  document.addEventListener('click', async (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const button = target.closest<HTMLButtonElement>('[data-copy-code]');
+    if (!button) return;
+
+    const panel = button.closest('.code-panel');
+    const source = panel?.querySelector<HTMLTextAreaElement>('.code-source');
+    if (!source) return;
+
+    try {
+      await navigator.clipboard.writeText(source.value);
+      const previous = button.innerHTML;
+      button.textContent = 'Copied';
+      window.setTimeout(() => { button.innerHTML = previous; }, 1400);
+    } catch {
+      button.textContent = 'Copy unavailable';
+    }
+  });
+</script>

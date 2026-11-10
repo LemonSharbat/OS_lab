@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const programs = (await getCollection('programs')).sort((a, b) =>
+  a.data.part.localeCompare(b.data.part) || a.data.order - b.data.order || a.data.title.localeCompare(b.data.title)
+);
+const partA = programs.filter((program) => program.data.part === 'A');
+const partB = programs.filter((program) => program.data.part === 'B');
+const hrefFor = (id: string) => `${import.meta.env.BASE_URL}programs/${id.replace(/\/info$/, '')}/`;
+---
+<BaseLayout>
+  <div class="page-heading">
+    <p class="eyebrow">YOUR PRACTICAL REFERENCE</p>
+    <h1>Lab programs</h1>
+    <p class="intro">Questions, notes and source code in one place. Add a program to the repository and it appears here after deployment.</p>
+  </div>
+  <div class="search-wrap">
+    <label class="sr-only" for="program-search">Search programs</label>
+    <input id="program-search" type="search" placeholder="Search programs…" autocomplete="off" />
+    <span class="search-hint">Search title, category or tags</span>
+  </div>
+  <div id="search-empty" class="empty-state" hidden>No programs match that search.</div>
+  <section class="program-section" id="part-a">
+    <div class="section-title-row"><h2>Part A</h2><span>{partA.length} {partA.length === 1 ? 'program' : 'programs'}</span></div>
+    <div class="program-list">
+      {partA.map((program) => (
+        <a class="program-card" href={hrefFor(program.id)} data-search={`${program.data.title} ${program.data.category ?? ''} ${program.data.tags.join(' ')}`.toLowerCase()}>
+          <div><h3>{program.data.title}</h3><p>{program.data.category ?? 'Operating Systems'}</p></div>
+          <span class="card-meta">{program.data.language.toUpperCase()} <span aria-hidden="true">↗</span></span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <section class="program-section" id="part-b">
+    <div class="section-title-row"><h2>Part B</h2><span>{partB.length} {partB.length === 1 ? 'program' : 'programs'}</span></div>
+    <div class="program-list">
+      {partB.map((program) => (
+        <a class="program-card" href={hrefFor(program.id)} data-search={`${program.data.title} ${program.data.category ?? ''} ${program.data.tags.join(' ')}`.toLowerCase()}>
+          <div><h3>{program.data.title}</h3><p>{program.data.category ?? 'Operating Systems'}</p></div>
+          <span class="card-meta">{program.data.language.toUpperCase()} <span aria-hidden="true">↗</span></span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <script>
+    const search = document.querySelector<HTMLInputElement>('#program-search');
+    const cards = [...document.querySelectorAll<HTMLAnchorElement>('.program-card')];
+    const sections = [...document.querySelectorAll<HTMLElement>('.program-section')];
+    const empty = document.querySelector<HTMLElement>('#search-empty');
+    search?.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      cards.forEach((card) => {
+        const matches = (card.dataset.search ?? '').includes(query);
+        card.hidden = !matches;
+        if (matches) visible++;
+      });
+      sections.forEach((section) => {
+        section.hidden = !section.querySelector('.program-card:not([hidden])');
+      });
+      if (empty) empty.hidden = visible !== 0;
+    });
+  </script>
+</BaseLayout>

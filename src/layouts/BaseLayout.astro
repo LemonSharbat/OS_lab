@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+interface Props { title?: string; description?: string; }
+const { title = 'Lab Handbook', description = 'A simple, searchable collection of lab questions and programs.' } = Astro.props;
+const currentPath = Astro.url.pathname;
+const homeHref = import.meta.env.BASE_URL;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#17191c" />
+    <title>{title} · Lab Handbook</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href={homeHref}> <span class="brand-mark">L</span> Lab Handbook </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Menu</button>
+        <a class="top-link" href="https://github.com" target="_blank" rel="noreferrer">Repository ↗</a>
+      </header>
+      <div class="page-frame">
+        <aside class="sidebar" id="sidebar">
+          <div class="sidebar-heading">COLLECTION</div>
+          <a class:list={["sidebar-link", { active: currentPath === homeHref }]} href={homeHref}>All programs</a>
+          <div class="sidebar-heading section-heading">SUBJECTS</div>
+          <div class="sidebar-group">
+            <span class="sidebar-group-title">Operating Systems</span>
+            <a class="sidebar-link" href={`${homeHref}#part-a`}>Part A</a>
+            <a class="sidebar-link" href={`${homeHref}#part-b`}>Part B</a>
+          </div>
+          <p class="sidebar-note">Programs are generated from the files in the <code>programs/</code> directory.</p>
+        </aside>
+        <main class="main-content"><slot /></main>
+      </div>
+      <footer class="site-footer">A small, source-first lab reference.</footer>
+    </div>
+    <script>
+      const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const sidebar = document.querySelector<HTMLElement>('#sidebar');
+      menuButton?.addEventListener('click', () => {
+        const open = sidebar?.classList.toggle('sidebar-open') ?? false;
+        menuButton.setAttribute('aria-expanded', String(open));
+      });
+    </script>
+  </body>
+</html>
