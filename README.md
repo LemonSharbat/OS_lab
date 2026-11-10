@@ -1,90 +1,241 @@
-# Lab Handbook
+# OS Lab Programs
 
-A small, static website for organising lab questions, notes and source programs. The `programs/` directory is the content source of truth. The website is generated from those files; there is no admin panel, database or separate copy of your code to maintain.
+A simple, static website for organising Operating Systems lab questions, notes and source code.
 
+The idea is: **keep the actual programs and their documentation inside `programs/`, and let the website take care of presenting them.**
 
-## Requirements
+There is no admin panel, database or separate copy of the source code to maintain. Edit your files, and the website is generated from them during the build.
 
-- Bun (1.4.4)
-- Git
+## ✨ Features
 
-## Run locally
+- **One source of truth:** All questions, notes and source programs live in `programs/`.
+- **Flexible notes:** Write documentation in Markdown. Include only the sections relevant to a particular program.
+- **Syntax highlighting:** Source code and Markdown code blocks are highlighted automatically.
+- **Copy code:** Copy the original source directly from a program page.
+- **Static website:** No backend, database or client-side framework runtime.
+- **Automated deployment:** GitHub Actions validates, builds and deploys the website to GitHub Pages.
+
+## 🚀 Getting Started
+
+### Requirements
+
+- [Bun](https://bun.com/) — version `1.4.4`
+- [Git](https://git-scm.com/)
+
+### Run locally
+
+Clone the repository and enter the project directory:
+
+```bash
+git clone https://github.com/LemonSharbat/OS_lab.git
+cd OS_lab
+```
+
+Install dependencies:
 
 ```bash
 bun install
+```
+
+Start the development server:
+
+```bash
 bun run dev
 ```
 
-Astro prints a local URL, normally `http://localhost:4321/`.
+Astro will print a local URL, usually:
 
-Useful commands:
-
-```bash
-bun run validate         # Validate program metadata and source files
-bun run check            # Astro and TypeScript diagnostics
-bun run build            # Generate static website
-bun run preview          # Preview generated website
+```text
+http://localhost:4321/
 ```
 
-## Add a new program
+The development server updates the website as you make changes to the project files.
 
-1. Create a new directory under the correct subject and part, for example:
+### Useful commands
 
-   `programs/operating-systems/part-a/fcfs/`
+| Command | Purpose |
+|---|---|
+| `bun run dev` | Start the local development server |
+| `bun run validate` | Validate program metadata and source files |
+| `bun run check` | Run Astro and TypeScript diagnostics |
+| `bun run build` | Generate the static website |
+| `bun run preview` | Preview the generated website locally |
 
-2. Add a source file, such as `program.c`.
-3. Add an `info.md` file beside it. Start with this frontmatter:
+## 📚 Adding a New Program
 
-   ```yaml
-   ---
-   title: First Come First Serve Scheduling
-   subject: Operating Systems
-   part: A
-   category: CPU Scheduling
-   language: c
-   source: program.c
-   order: 2
-   tags:
-     - scheduling
-     - cpu
-   ---
-   ```
+The `programs/` directory is the content source of truth. To add a program, create a folder under the appropriate subject and lab part.
 
-4. Write any Markdown content below the frontmatter. All sections are optional: include only what helps for that program. You can use headings, paragraphs, lists, tables, links and fenced code blocks.
-5. Run `bun run validate` and `bun run build` locally if you want to check before pushing.
-6. Commit and push to `main` (or open a pull request). The workflow validates and builds the site. A successful push to `main` is deployed to GitHub Pages once Pages is configured.
+For example:
 
-### Frontmatter fields
+```text
+programs/
+└── operating-systems/
+    └── part-a/
+        └── fcfs/
+            ├── info.md
+            └── program.c
+```
 
-| Field | Required | Meaning |
-|---|---|---|
-| `title` | Yes | Display title |
-| `subject` | No | Defaults to `Operating Systems` |
-| `part` | No | `A` or `B`; defaults to `A` |
-| `category` | No | Optional grouping/short description |
-| `language` | Yes | `c`, `cpp`, `bash` or `text` |
-| `source` | Yes | Source filename relative to this program folder |
-| `order` | No | Sort order within a part; defaults to 999 |
-| `tags` | No | Searchable keywords |
+Each program folder currently needs two files:
 
-### Flexible Markdown
+- `program.c` — the actual source code (the filename can be different).
+- `info.md` — the question, metadata and any supporting notes.
 
-There is no mandatory template for the body. For example, a program may have only a question and source code. Another may include an algorithm, compilation commands, sample input, sample output, notes or multiple examples. Use the headings that make sense; omit everything else.
+### 1. Add the source file
 
-Fenced Markdown code blocks are syntax-highlighted automatically. Use language labels such as `c`, `bash`, `text`, `console` or `shell` after the opening backticks. Sample output should normally use `text` so it is displayed as output rather than treated as executable code.
+Write your program normally in the appropriate source file.
 
-The main source file is rendered separately from the Markdown body. It receives a filename header and a copy button. The copy button copies the original source text, not the highlighted HTML.
+For example, `program.c`:
+
+```c
+#include <stdio.h>
+
+int main() {
+    printf("Hello, OS Lab!\\n");
+    return 0;
+}
+```
+
+### 2. Add `info.md`
+
+Start with the following frontmatter:
+
+```yaml
+---
+title: First Come First Serve Scheduling
+subject: Operating Systems
+part: A
+category: CPU Scheduling
+language: c
+source: program.c
+order: 2
+tags:
+  - scheduling
+  - cpu
+---
+```
+
+### 3. Write your notes
+
+Below the frontmatter, write whatever documentation is useful for that program.
+
+For example:
+
+```markdown
+## Question
+
+Implement the First Come First Serve CPU scheduling algorithm.
+
+## Algorithm
+
+1. Read the number of processes.
+2. Accept the burst time for each process.
+3. Calculate waiting time and turnaround time.
+4. Display the results.
+
+## Compilation
+
+```bash
+gcc program.c -o program
+./program
+```
+
+## Sample Output
+
+```text
+Enter number of processes: 3
+...
+```
+
+There is no mandatory template for the Markdown content. You can use headings, paragraphs, lists, tables, links and fenced code blocks as needed.
+
+An algorithm, compilation instructions, sample input, output and additional notes are all optional.
+
+### Frontmatter reference
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `title` | Yes | Name displayed on the program page |
+| `subject` | No | Subject name. Defaults to `Operating Systems` |
+| `part` | No | Lab part: `A` or `B`. Defaults to `A` |
+| `category` | No | Optional grouping or short description |
+| `language` | Yes | Source language: `c`, `cpp`, `bash`, or `text` |
+| `source` | Yes | Primary source filename, relative to the program folder |
+| `order` | No | Sorting order within a part. Defaults to `999` |
+| `tags` | No | Keywords used for searching and filtering |
+
+### Code blocks and syntax highlighting
+
+Use fenced Markdown code blocks with a language identifier:
+
+````markdown
+```c
+printf("Hello World");
+```
+
+```bash
+gcc program.c -o program
+```
+
+```text
+Hello World
+```
+````
+
+Common identifiers include `c`, `cpp`, `bash`, `text`, `console` and `shell`.
+
+Use `text` for sample output so it is displayed as plain output rather than treated as executable code.
+
+The primary source file is rendered separately from the Markdown notes. It includes a filename header and a copy button. The button copies the original source text, not the highlighted HTML.
 
 ### Multiple source files
 
-The current first version expects one primary source file per program page. The folder can still contain supporting files, but displaying multiple source files with separate tabs/blocks is a future enhancement. For now, set `source` to the file you want featured.
+The current version supports **one primary source file per program page**.
 
-## Tech choices
+You can still keep supporting files in the same folder, but only the file specified by the `source` field in `info.md` is displayed as the main program.
 
-- **Astro** builds the pages at build time. The deployed `dist/` directory is static HTML, CSS and JavaScript.
-- **Astro Content Collections** discover each `info.md` file and validate its frontmatter schema.
-- **Shiki** highlights the standalone source code at build time using a VS Code-style grammar engine.
-- **Plain CSS and small browser scripts** handle layout, mobile navigation, search and copy. There is no client-side framework runtime.
-- **GitHub Actions** checks pull requests and deploys successful builds from `main`.
+Displaying multiple source files using separate tabs or code blocks can be added later.
 
-No backend or database is needed for this use case.
+## 🛠️ How It Works
+
+The project uses a small set of tools, each with a specific responsibility.
+
+| Technology | Responsibility |
+|---|---|
+| **Astro** | Generates the website at build time |
+| **Astro Content Collections** | Discovers program documentation and validates its frontmatter |
+| **Shiki** | Highlights source code during the build |
+| **HTML, CSS and JavaScript** | Handle the interface, navigation, search and copy functionality |
+| **Bun** | Installs dependencies and runs project scripts |
+| **GitHub Actions** | Validates, builds and deploys the website |
+| **GitHub Pages** | Hosts the generated website |
+
+The build produces a `dist/` directory containing static HTML, CSS, JavaScript and other assets.
+
+That generated output is what gets deployed. The deployed website does not need a running server, database or application backend.
+
+## 🚢 Deployment
+
+Deployment is handled through GitHub Actions.
+
+The intended workflow is:
+
+1. Make changes to your programs or documentation.
+2. Push your changes to a development branch.
+3. Open a pull request targeting `main`.
+4. GitHub Actions validates the content, checks the Astro project and builds the website.
+5. Once the pull request is merged into `main`, the deployment workflow builds and publishes the website to GitHub Pages.
+
+For the first deployment, GitHub Pages must be configured to use **GitHub Actions** as its deployment source.
+
+See the project documentation for more details about the architecture, workflows and deployment setup.
+
+## 📖 Project Documentation
+
+Additional documentation is available in the `docs/` directory.
+
+comming soon...
+
+---
+
+**The main principle:** Write and maintain your programs in `programs/`. The website is just a generated view of that content.
