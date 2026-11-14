@@ -10,10 +10,10 @@ source: main.c
 ## Question
 
 Write a C program using the execl() system call that:
-  i. Reads the name of a shell script from the keyboard.
-  ii. Executes that script using /bin/sh.
-  iii. Displays an appropriate error message if the script cannot be found or executed.
-  iv. The shell script should prompt the user to enter three numbers, find and display the greatest of the three numbers.
+- i. Reads the name of a shell script from the keyboard.
+- ii. Executes that script using /bin/sh.
+- iii. Displays an appropriate error message if the script cannot be found or executed.
+- iv. The shell script should prompt the user to enter three numbers, find and display the greatest of the three numbers.
 
 
 ## shell program
