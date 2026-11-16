@@ -18,19 +18,17 @@ int main() {
 
         // clild process
         if (pid == 0) {
-            printf("child: %d | PID: %d | Parent PID: %d\n",
-                   i + 1, getpid(), getppid());
-            exit(0);
-        }
-    }
+            printf("child: %d | PID: %d | Parent PID: %d\n", i + 1, getpid(), getppid());
 
-    // parent wait for all 5 children
-    for (int i = 0; i < 5; i++) {
-        wait(NULL);
+            sleep(3);
+            exit(0);
+        } else {
+            wait(NULL);
+        }
+
     }
 
     printf("--------------------------------\n");
-    printf("Parent: All children have terminated.\n");
 
     return 0;
 }
