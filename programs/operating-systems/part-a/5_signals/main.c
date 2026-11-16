@@ -15,7 +15,6 @@ void hy_handler(int sig) {
 }
 
 int main() {
-    // signal(SIGINT, hy_handler);
     signal(SIGTERM, hy_handler);
     signal(SIGINT, hy_handler);
     signal(SIGHUP, hy_handler);
