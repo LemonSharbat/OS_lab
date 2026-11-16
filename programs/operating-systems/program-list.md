@@ -12,6 +12,7 @@ Part A
     4. Write a C program using Unix system calls to open a file for writing (create it if it does not exist). The program should read text from the keyboard and write it into file until Ctrl+D.
 
     5. Write a C program that registers a signal handler for SIGINT, SIGTERM, SIGHUP, SIGALRM, and SIGUSR1. The handler should receive each signal and perform some operation.
+
     6. Write a C program to demonstrate Critical section in process synchronization.
 
 Part B
